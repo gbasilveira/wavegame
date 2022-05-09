@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useInsertionEffect, useState } from "react";
 import { ethers } from 'ethers';
 import "./App.css";
 import abi from './WavePortal.json';
 import { Button, FormControl, InputGroup, Row, Container, Col, Card, Alert } from "react-bootstrap";
+import { log } from "console";
 
 const contractAddress = '0xE62Ee36b8D09DD835E0D06a48A5ddE49D0973779';
 // const contractAddress = '0xCf84099552601866cb92CB595fD967FdCB64EeeB';
@@ -48,21 +49,21 @@ const App = () => {
         try {
 
             if (!ethereum) {
-                console.log("Make sure you have metamask!");
-                return;
+                return false;
             }
 
-            // console.log("We have the ethereum object", ethereum);
 
-            if (ethereum.request)
+            if (ethereum.request){
                 accounts = await ethereum.request({ method: "eth_accounts" });
+            }
 
             if (accounts.length !== 0) {
                 const account = accounts[0];
-                console.log("Found an authorized account:", account);
-                setCurrentAccount(account)
+                setCurrentAccount(account); 
+                return true;
             } else {
                 console.log("No authorized account found")
+                return false;
             }
         } catch (error) {
             console.log(error);
@@ -180,6 +181,12 @@ const App = () => {
                 console.log("Ethereum object doesn't exist!")
             }
         } catch (error) {
+            let am = alertMessage;
+            am.show  = true;
+            am.text  = "An error ocurred. Sorry";
+            am.color = 'danger';
+            setAlertMessage(am);
+
             console.log(error);
         }
     }
@@ -209,10 +216,9 @@ const App = () => {
         }
         catch (error) { console.log(error); }
     }
-    /*
-    * This runs our function when the page loads.
-    */
+    
     useEffect(() => {
+
         checkIfWalletIsConnected();
         if (currentAccount) {
             getAllWaves();
@@ -238,15 +244,19 @@ const App = () => {
             justifyContent: 'center',
             alignItems: 'center',
         }}>
-            <button className="btn align-self-center btn-success" onClick={connectWallet}>Connect your wallet, please!</button>
+            <button className="btn align-self-center btn-success" onClick={connectWallet}>Connect your wallet to Rinkeby network, please!</button>
         </Container>
     </>
     
     
     return (<>
-        {alertMessage.show && <Alert className="text-center shadow mx-2" variant={alertMessage.color} style={{zIndex:'10', right:'0px'}}><p className="m-0 p-lg-4 p-0" style={{fontSize:'large'}}>{alertMessage.text}</p></Alert>}
+        {alertMessage.show && <>
+            <Alert className="text-center shadow m-4" variant={alertMessage.color} style={{zIndex:'10', right:'0px'}}>
+                <p className="m-0 p-lg-4 p-0" style={{fontSize:'large'}}>{alertMessage.text}</p>
+            </Alert>
+        </>}
         <Container className="p-1 p-md-4 my-4 h-100 rounded-lg" style={{overflow:'none'}} >
-            <Row style={{background:'hsla(0,0%,0%,10%)'}} className="shadow p-1">
+            <Row style={{background:'hsla(0,0%,0%,10%)'}} className="shadow p-4">
                 <InputGroup>
                     <FormControl
                         onChange={(e) => { setMessageInput(e.target.value) }}
@@ -256,15 +266,15 @@ const App = () => {
                 </InputGroup>
             </Row>
             <Row className="h-100 p-0 m-0 mt-4" style={{overflow: 'auto' }}>
-                    {allWaves.map((wave: Wave, key: number) => <>
-                        <Col className="col-12  col-md-6 col-lg-4 col-xl-3 ">
-                            <Card key={key} className="rounded align-self-start shadow text-lowercase p-0 m-1 "   style={{background:'hsla(0,0%,100%,30%)'}}>
-                                <Card.Header className="font-weight-bold">{wave.address?.substr(0,6) + '...' + wave.address?.substr(-5)}</Card.Header>                            
-                                <Card.Body className="" style={{background:'hsla(0,0%,100%,30%)'}}>{wave.message}</Card.Body> 
-                                <Card.Footer className="font-weight-light" style={{fontSize:'small', textAlign:"right"}}>{wave.timestamp.toLocaleString()}</Card.Footer>
-                            </Card>
-                        </Col>
-                    </>)}  
+                {allWaves.map((wave: Wave, key: number) => <>
+                    <Col key={key} className="col-12  col-md-6 col-lg-4 col-xl-3 ">
+                        <Card className="rounded align-self-start shadow text-lowercase p-0 m-1 "   style={{background:'hsla(0,0%,100%,30%)'}}>
+                            <Card.Header className="font-weight-bold">{wave.address?.substr(0,6) + '...' + wave.address?.substr(-5)}</Card.Header>                            
+                            <Card.Body className="" style={{background:'hsla(0,0%,100%,30%)'}}>{wave.message}</Card.Body> 
+                            <Card.Footer className="font-weight-light" style={{fontSize:'small', textAlign:"right"}}>{wave.timestamp.toLocaleString()}</Card.Footer>
+                        </Card>
+                    </Col>
+                </>)}  
             </Row>
         </Container>
     </>
