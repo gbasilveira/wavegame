@@ -232,6 +232,17 @@ const App = () => {
         body.style.backgroundAttachment='fixed';
     }, [currentAccount])
 
+    const Social = () => <>
+        <div className="d-flex justify-content-center flex-row  align-items-center">
+            <a href="https://twitter.com/gbasilveira"><img src="/img/twitter.svg" width="24" className="mx-1"/></a>
+            <a href="https://opensea.io/gbasilveira"><img src="/img/opensea.svg" width="24" className="mx-1"/></a>
+            <a href="https://linkedin.com/in/gbasilveira"><img src="/img/linkedin.svg" width="24" className="mx-1"/></a>
+            <a href="https://facebook.com/gbasilveira"><img src="/img/facebook.svg" width="24" className="mx-1"/></a>
+            <a href="https://instagram.com/gbasilveira"><img src="/img/instagram.svg" width="24" className="mx-1"/></a>
+            <a href="https://tiktok.com/@gbasilveira"><img src="/img/tiktok.svg" width="24" className="mx-1"/></a>
+        </div>
+    </>
+
     if(!currentAccount) return <>
         <Container style={{
             height: '100vh',
@@ -244,7 +255,23 @@ const App = () => {
             justifyContent: 'center',
             alignItems: 'center',
         }}>
-            <button className="btn align-self-center btn-success" onClick={connectWallet}>Connect your wallet to Rinkeby network, please!</button>
+
+            <Row style={{backgroundColor: 'hsla(0,0%,100%,90%)'}} className="p-5 shadow">
+                <Row className="my-5">
+                    <img src="/img/gbasilveira.svg" style={{maxHeight:'250px'}} alt="" />
+                </Row>
+                <Row>
+                    <p className="">
+                        Hi, this is Guilherme, I'm developing my Web3 portfolio and this was my first exercise at <a href="https://buildspace.so/">Buildspace</a>.<br />
+                        The idea is simple: a decentralized guestbook, just like those from the 2000's... "any one?". <br />
+                        Thanks for the collaboration ;)
+                    </p> 
+                </Row>
+                <Row>
+                    <button className="btn align-self-center btn-success my-5 py-4" onClick={connectWallet}>Connect your wallet to Rinkeby network, please!</button>
+                </Row>
+                <Row><Social /></Row>
+            </Row>
         </Container>
     </>
     
@@ -255,27 +282,35 @@ const App = () => {
                 <p className="m-0 p-lg-4 p-0" style={{fontSize:'large'}}>{alertMessage.text}</p>
             </Alert>
         </>}
+        <Row className="p-3 rounded shadow bg-white d-flex flex-row  justify-content-between">
+            <Col>
+                <img src="/img/gbasilveira.svg" style={{maxHeight:'50px'}} alt="" />
+            </Col>
+            <Col className="d-flex justify-content-end">
+                <Social />
+            </Col>
+        </Row>
         <Container className="p-1 p-md-4 my-4 h-100 rounded-lg" style={{overflow:'none'}} >
-            <Row style={{background:'hsla(0,0%,0%,10%)'}} className="shadow p-4">
-                <InputGroup>
-                    <FormControl
-                        onChange={(e) => { setMessageInput(e.target.value) }}
-                        value={messageInput}
-                    />
-                    <Button onClick={wave} className="btn py-2 px-4">send</Button>
-                </InputGroup>
-            </Row>
-            <Row className="h-100 p-0 m-0 mt-4" style={{overflow: 'auto' }}>
-                {allWaves.map((wave: Wave, key: number) => <>
-                    <Col key={key} className="col-12  col-md-6 col-lg-4 col-xl-3 ">
-                        <Card className="rounded align-self-start shadow text-lowercase p-0 m-1 "   style={{background:'hsla(0,0%,100%,30%)'}}>
-                            <Card.Header className="font-weight-bold">{wave.address?.substr(0,6) + '...' + wave.address?.substr(-5)}</Card.Header>                            
-                            <Card.Body className="" style={{background:'hsla(0,0%,100%,30%)'}}>{wave.message}</Card.Body> 
-                            <Card.Footer className="font-weight-light" style={{fontSize:'small', textAlign:"right"}}>{wave.timestamp.toLocaleString()}</Card.Footer>
-                        </Card>
-                    </Col>
-                </>)}  
-            </Row>
+                <Row style={{background:'hsla(0,0%,0%,10%)'}} className="shadow p-4">
+                    <InputGroup>
+                        <FormControl
+                            onChange={(e) => { setMessageInput(e.target.value) }}
+                            value={messageInput}
+                        />
+                        <Button onClick={wave} className="btn py-2 px-4">send</Button>
+                    </InputGroup>
+                </Row>
+                <Row className="h-100 p-0 m-0 mt-4" style={{overflow: 'auto' }}>
+                    {allWaves.map((wave: Wave, key: number) => <>
+                        <Col key={key} className="col-12  col-md-6 col-lg-4 col-xl-3 ">
+                            <Card className="rounded align-self-start shadow text-lowercase p-0 m-1 "   style={{background:'hsla(0,0%,100%,30%)'}}>
+                                <Card.Header className="font-weight-bold">{wave.address?.substr(0,6) + '...' + wave.address?.substr(-5)}</Card.Header>                            
+                                <Card.Body className="" style={{background:'hsla(0,0%,100%,30%)'}}>{wave.message}</Card.Body> 
+                                <Card.Footer className="font-weight-light" style={{fontSize:'small', textAlign:"right"}}>{wave.timestamp.toLocaleString()}</Card.Footer>
+                            </Card>
+                        </Col>
+                    </>)}  
+                </Row>
         </Container>
     </>
     );
