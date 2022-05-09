@@ -1,0 +1,62 @@
+// SPDX-License-Identifier: UNLICENSED
+
+pragma solidity ^0.8.0;
+
+import "hardhat/console.sol";
+
+contract WavePortal {
+    address owner;
+    uint256 gameId;
+    uint256 target;
+    uint256 totalWaves;
+    mapping(address => uint256) public totalWavesPerAddress;
+    mapping(uint256 => address) public winners;
+
+    event NewGame(uint256 indexed _gameId, uint256 indexed _target);
+    event GameWon(uint256 indexed _gameId, address indexed _winner);
+    
+    constructor() {
+        console.log("Yo yo, I am a contract and I am smart");
+        target = 0;
+        owner = msg.sender;
+    }
+
+    function newGame(uint256 _target) public {
+        require(msg.sender == owner, 'Only owner can create a new game');
+        require(target == 0, 'Game is still rolling');
+        require(gameId < 2^256, 'No more games available');
+
+        target = _target;
+        gameId += 1;
+
+        emit NewGame(gameId, target);
+
+        console.log('New Game, ID: [%u] \t Target: [%u]', gameId, target);
+    }
+
+    function wave() public {
+        require(target > 0, 'Game is still rolling');
+
+        totalWaves += 1;
+        totalWavesPerAddress[msg.sender] += 1;
+
+        if (totalWaves == target) {
+            winners[gameId] = msg.sender;
+            emit GameWon(gameId, msg.sender);
+            console.log('The game was won by: %s at %u waves.',msg.sender, target);
+
+
+            //stop game
+            target = 0;
+            console.log('Game is Stopped');
+        }
+
+        console.log("%s has waved!", msg.sender);
+    }
+
+    function getTotalWaves() public view returns (uint256) {
+        console.log("We have %d total waves!", totalWaves);
+        return totalWaves;
+    }
+
+}
